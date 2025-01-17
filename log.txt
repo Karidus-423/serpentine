@@ -1,0 +1,16 @@
+[serpentine] 2025/01/17 16:28:28 main.go:15: Started Logger.
+[serpentine] 2025/01/17 16:28:28 main.go:33: Recived message with method initialize
+[serpentine] 2025/01/17 16:28:28 main.go:41: Connected to: Neovim 0.10.3+v0.10.3
+[serpentine] 2025/01/17 16:28:28 main.go:51: Sent Initialize response successfully.
+[serpentine] 2025/01/17 16:28:29 main.go:33: Recived message with method initialized
+[serpentine] 2025/01/17 16:28:29 main.go:33: Recived message with method textDocument/didOpen
+[serpentine] 2025/01/17 16:28:29 main.go:59: Opened: file:///home/kennett/personal/serpentine/README.md 
+ Contents: # Serpentine: Hobby Zig LSP written in Go
+change changes changes
+[serpentine] 2025/01/17 16:28:34 main.go:33: Recived message with method textDocument/didChange
+[serpentine] 2025/01/17 16:28:34 main.go:74: Opened: file:///home/kennett/personal/serpentine/README.md 
+ Contents: []
+[serpentine] 2025/01/17 16:28:34 main.go:33: Recived message with method textDocument/didSave
+[serpentine] 2025/01/17 16:28:42 main.go:33: Recived message with method textDocument/hover
+[serpentine] 2025/01/17 16:28:44 main.go:33: Recived message with method textDocument/hover
+[serpentine] 2025/01/17 16:28:48 main.go:33: Recived message with method textDocument/hover
