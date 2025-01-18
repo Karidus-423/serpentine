@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"io"
 	"log"
 	"os"
 	"serpentine/analysis"
@@ -18,6 +19,7 @@ func main() {
 	scanner.Split(rpc.Split)
 
 	state := analysis.NewState()
+	writer := os.Stdout
 
 	for scanner.Scan() {
 		msg := scanner.Bytes()
@@ -25,11 +27,13 @@ func main() {
 		if err != nil {
 			logger.Println("Error produced.")
 		}
-		handleMessage(logger, state, method, contents)
+		handleMessage(logger, writer, state, method, contents)
 	}
 }
 
-func handleMessage(logger *log.Logger, state analysis.State, method string, contents []byte) {
+func handleMessage(logger *log.Logger, writer io.Writer,
+	state analysis.State, method string, contents []byte) {
+
 	logger.Printf("Recived message with method %s", method)
 
 	switch method {
@@ -42,13 +46,8 @@ func handleMessage(logger *log.Logger, state analysis.State, method string, cont
 			request.Params.ClientInfo.Name,
 			request.Params.ClientInfo.Version)
 
-		//Reply...
 		msg := lsp.NewInitializeResponse(request.ID)
-		reply := rpc.EncodeMessage(msg)
-
-		writer := os.Stdout
-		writer.Write([]byte(reply))
-		logger.Print("Sent Initialize response successfully.")
+		writeResponse(writer, msg)
 
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
@@ -78,7 +77,30 @@ func handleMessage(logger *log.Logger, state analysis.State, method string, cont
 		for _, change := range request.Params.ContentChanges {
 			state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
 		}
+
+	case "textDocument/hover":
+		var request lsp.HoverRequest
+		if err := json.Unmarshal(contents, &request); err != nil {
+			logger.Printf(
+				"From TextDocumentDidChangeNotification: Unable to parse %s", err)
+		}
+
+		response := lsp.HoverResponse{
+			Response: lsp.Response{
+				RPC: "2.0",
+				ID:  request.ID,
+			},
+			Result: lsp.HoverResult{
+				Contents: "Hello from serpentine.",
+			},
+		}
+		writeResponse(writer, response)
 	}
+}
+
+func writeResponse(writer io.Writer, msg any) {
+	reply := rpc.EncodeMessage(msg)
+	writer.Write([]byte(reply))
 }
 
 func getLogger(filename string) *log.Logger {
